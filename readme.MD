@@ -1,2 +1,2 @@
-dbConnectionStr=mongodb://localhost/catsdb
-PORT=3001
+dbConnectionStr=mongodb://localhost/[yourdbname]
+PORT=
