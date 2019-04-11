@@ -4,7 +4,15 @@
 const express = require("express")
 const app = express()
 const mongoose = require('mongoose');
+const hbs = require("hbs")
+// this is used for POST data understanding! without this you cannot read post data
+const bodyParser = require('body-parser')
 require('dotenv').config()
+
+app.set("view engine", "hbs");
+app.set("views", __dirname + "/views");
+// here you are activating a middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect(process.env.dbConnectionStr);
 
@@ -40,7 +48,13 @@ const CatBuilder = mongoose.model('Cat', schema);
 //     }
 // })
 
+app.post("/newCat", (req, res) => {
+    let newCat = req.body
+    newCat.age = parseInt(newCat.age)
 
+    CatBuilder.create(newCat)
+        .then((newCatData) => res.json({catCreated: true, newCatData}))
+})
 
 app.get("/allcats", (req, res) => {
     CatBuilder
@@ -55,6 +69,14 @@ app.get("/allcats", (req, res) => {
 app.get("/oneCat/:catID", (req, res) => {
     CatBuilder
     .findById(req.params.catID)
+    .then(theCat => res.json(theCat))
+    .catch(err => console.log(err))
+})
+
+//http://localhost:3001/oneCat/5cadd666c2a3cb698b640712
+app.get("/oneCat", (req, res) => {
+    CatBuilder
+    .findById(req.query.catID)
     .then(theCat => res.json(theCat))
     .catch(err => console.log(err))
 })
@@ -87,6 +109,10 @@ app.get("/allcats/:ncats", (req, res) => {
     .catch(err => console.log(err))
 })
 
+// localhost:3000/allcats/200/age/5
+// app.get("/allcats/:ncats/age/:age", (req, res) => {
+
+
 
 app.get("/allcats/:ncats/:sorting", (req, res) => {
     let totalCats = +req.params.ncats
@@ -100,5 +126,36 @@ app.get("/allcats/:ncats/:sorting", (req, res) => {
     .then(allCats => res.json(allCats))
     .catch(err => console.log(err))
 })
+
+// update
+// app.put("/catAgeUpdate/:catID")
+
+// create
+// app.post("/newCat")
+
+// delete
+// app.delete("/cat/:catID")
+
+// app.put("/cats")
+
+app.get("/findCity", (req, res) => {
+    res.render("layout")
+})
+app.get("/search", (request, response) => {
+    // console.log(req.params.city)
+    // response.json({city: request.params.city})
+
+    // http://localhost:3001/search?city=london&country=uk
+    response.json(
+        {
+            city: request.query.city,
+            country: request.query.country
+        }
+    )
+
+    // setTimeout(function () {
+    //     response.json({city: request.params.city})    
+    // }, 10000)
+});
 
 app.listen(process.env.PORT)
