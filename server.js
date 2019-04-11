@@ -21,7 +21,7 @@ const schema = {
     age: Number
 }
 //collection name is Cat
-const CatBuilder = mongoose.model('Cat', schema);
+const CatBuilder = mongoose.model('Cats', schema);
 
 // const cats = Array(100)
 //     .fill(0)
@@ -47,6 +47,29 @@ const CatBuilder = mongoose.model('Cat', schema);
 //         console.log('meow');
 //     }
 // })
+
+// app.get("/morec")
+
+app.get("/catsByAge/:age", (req, res) => {
+    CatBuilder
+        .find({age: {$gte: +req.params.age}})
+        .sort({age: 1})
+        .then((cats) => {
+            // console.log(cats)
+            
+            // passing multiple data to the views,
+            // possibly coming from multiple promises
+            // var data = {
+            //     cats: catsViaMongoose,
+            //     other: other
+            // }
+            // res.render("catsdisplayer", data)
+
+            console.log({cats})
+
+            res.render("catsdisplayer", {cats})
+        })
+})
 
 app.post("/newCat", (req, res) => {
     let newCat = req.body

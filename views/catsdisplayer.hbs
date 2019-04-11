@@ -1,0 +1,16 @@
+<style>
+    div {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 20px;
+    }
+</style>
+
+{{#each cats}}
+<div>
+    <h1>{{this.name}}</h1>
+    <p>This cat's age is {{this.age}}</p>
+    <a href="/moreCatData/{{this._id}}">More info about {{this.name}} ❤</a>
+</div>
+{{/each}}
+xxx
